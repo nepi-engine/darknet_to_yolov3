@@ -1,13 +1,22 @@
+import os
 import argparse
 from utils.layers import *
 from model import *
 from utils.parse_config import *
 
-ONNX_EXPORT = True
+#ONNX_EXPORT = True
 
 
-def convert(cfg='cfg/yolov3-spp.cfg', weights='weights/yolov3-spp.weights', img_dim=(1024, 1024), ONNX_EXPORT=True):
-
+def convert(output_folder = './', model_name = 'yolov3', cfg='cfg/yolov3-spp.cfg', weights='weights/yolov3-spp.weights', img_dim=(1024, 1024), ONNX_EXPORT=True):
+    success = False
+    if os.path.exists(output_folder) == False:
+        print("Could not find output folder: " + str(output_folder))
+        return
+    else:
+        output_file = os.path.join(output_folder,model_name,'.pt')
+        if os.path.exists(output_file) == True:
+            print("Deleting existing model file: " + str( output_file))
+            os.remove(output_file)
     # Initialize model
     img_dim = tuple(img_dim) if type(img_dim) != tuple else img_dim
     model = Darknet(cfg, img_size=img_dim)
@@ -22,10 +31,10 @@ def convert(cfg='cfg/yolov3-spp.cfg', weights='weights/yolov3-spp.weights', img_
                  'model': model.state_dict(),
                  'optimizer': None}
 
-        target = weights.rsplit('.', 1)[0] + '.pt'
-        torch.save(chkpt, target)
+        torch.save(chkpt, output_file)
         print("Success: converted '%s' to '%s'" % (weights, target))
-
+        success = True
+    '''
     if ONNX_EXPORT:
         model.fuse()
         img = torch.zeros((1, 3) + img_dim)  # (1, 3, 320, 192)
@@ -43,6 +52,8 @@ def convert(cfg='cfg/yolov3-spp.cfg', weights='weights/yolov3-spp.weights', img_
 
     else:
         print('Error: extension not supported.')
+    '''
+    return success
 
 
 

@@ -1,19 +1,10 @@
-# Yolov3_Darknet_PyTorch_Onnx_Converter
-This Repository allows to convert *.weights file of darknet format to *.pt (pytorch format) and *.onnx (ONNX format).
-Based on ultralytics repository (archive branch).This module converts *.weights files to *.pt and to *.onnx
-    
-Please keep in mind to delete the next fields from cfg file because the parser doesnt support them and because they dont impact inference:
 
-    1. jitter
-    2. nms_threshold
-    3. threshold
+# Converts a nepi darknet_ros models folder into a nepi yolov3 models folder
 
-Install requirements:
+# 1) Connect your nepi device to the internet
+# 2) ssh into your nepi system then run
+cd /mnt/nepi_storage/ai_models
+git https://github.com/nepi-engine/darknet_to_yolov3.git
+cd darknet_to_yolov3
+sudo python convert_nepi_darknet_files.py
 
-    python -m venv venv
-    .\venv\Scripts\activate
-    pip install -r requirements.txt
-
-The command for conversion is:
-    
-    python converter.py yolov3.cfg yolov3.weights 1024 1024
